@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+
+ web_srv:
+  image: nginx
+  container_name: web_srv
+  restart: unless-stopped
+  volumes:
+   - ./nginx/vhosts:/etc/nginx/conf.d/
+   - ./nginx/www:/var/www/
+   - ./nginx/logs:/var/log/nginx/
+  ports:
+   - "80:80"
+   - "443:443"
+#  links:
+#   - php
+
+
+ database_srv:
+  image: mariadb
+  container_name: database_srv
+  restart: unless-stopped
+  ports:
+   - "3306:3306"
+  environment:
+   MYSQL_ROOT_PASSWORD: rootPASS
+   MYSQL_DATABASE: testBASE
+   MYSQL_USER: testUSER
+   MYSQL_PASSWORD: testPASS
+  volumes:
+    - ./MySQL:/var/lib/mysql
+    - ./MySQL:/etc/mysql
+
+
+ php:
+  build: ./php-fpm
+  container_name: php
+#  links:
+#   - database_srv
+  volumes:
+    - ./nginx/www:/var/www
